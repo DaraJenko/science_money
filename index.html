@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- viewport(画面表示領域)の設定。デバイスの画面幅に合わせる。初期ズーム倍率は1.0 -->
+  <title>ノートの余白 | 物理・数学・ITの解説サイト</title>
+
+  <!-- スタイルは css/style.css で管理 -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===== ホームバー ===== -->
+  <div class="home-bar">
+    <div class="inner">
+      <a class="home" href="index.html">ホーム</a>
+      <div class="sub-links">
+        <a href="about.html">このサイトについて</a>
+        <a href="contact.html">お問い合わせ</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== サイトヘッダー ===== -->
+  <header class="site">
+    <div class="header-inner">
+      <div class="brand-mark">
+        <small>NOTES ON THE MARGIN</small>
+        ノートの余白
+      </div>
+      <p class="tagline">
+        物理・数学・ITを中心に、調べたことや学んだことをまとめています。
+      </p>
+    </div>
+  </header>
+
+  <!-- ===== ジャンルメニュー ===== -->
+  <nav class="genre-bar">
+    <div class="inner">
+      <button class="genre-btn active" data-genre="all">すべて</button>
+      <button class="genre-btn" data-genre="physics">物理</button>
+      <button class="genre-btn" data-genre="math">数学</button>
+      <button class="genre-btn" data-genre="it">IT</button>
+      <button class="genre-btn" data-genre="deals">お得情報</button>
+    </div>
+  </nav>
+
+  <!-- ===== サブジャンルメニュー =====
+       選択中のジャンルに応じて、js/main.js が中身を動的に生成します。
+       「すべて」を選んでいるときは空になり、非表示になります。 -->
+  <nav class="subgenre-bar" id="subgenre-bar">
+    <div class="inner" id="subgenre-inner"></div>
+  </nav>
+
+  <!-- ===== メインコンテンツ ===== -->
+  <main>
+    <div class="section-head">
+      <span class="code" id="genre-code">ALL</span>
+      <h2 id="genre-title">新着記事</h2>
+      <span class="count" id="genre-count"></span>
+    </div>
+
+    <ul class="article-list" id="article-list">
+      <!-- js/main.js によって描画されます -->
+    </ul>
+  </main>
+
+  <footer>
+    <p>© 2026 ノートの余白</p>
+  </footer>
+
+  <!-- JSは外部ファイルで管理 -->
+  <!-- </body>の直前に書くことで、HTML要素が読み込まれた後にJSが実行されます -->
+  <script src="js/main.js"></script>
+</body>
+</html>

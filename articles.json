@@ -1,0 +1,52 @@
+[
+  {
+    "date": "2026-11-02",
+    "updated": "2026-11-02",
+    "genre": "it",
+    "genreLabel": "IT",
+    "subGenre": "git",
+    "subGenreLabel": "Git",
+    "title": "Gitチュートリアル⑤：リモートリポジトリとリベースの基礎",
+    "url": "articles/it-5.html"
+  },
+  {
+    "date": "2026-11-02",
+    "updated": "2026-11-02",
+    "genre": "it",
+    "genreLabel": "IT",
+    "subGenre": "git",
+    "subGenreLabel": "Git",
+    "title": "Gitチュートリアル④：ブランチとマージを実践する",
+    "url": "articles/it-4.html"
+  },
+  {
+    "date": "2026-11-02",
+    "updated": "2026-11-02",
+    "genre": "it",
+    "genreLabel": "IT",
+    "subGenre": "git",
+    "subGenreLabel": "Git",
+    "title": "Gitチュートリアル③：リポジトリを作って基本コマンドを実践する",
+    "url": "articles/it-3.html"
+  },
+  {
+    "date": "2026-11-02",
+    "updated": "2026-11-02",
+    "genre": "it",
+    "genreLabel": "IT",
+    "subGenre": "git",
+    "subGenreLabel": "Git",
+    "title": "Gitチュートリアル②：環境構築（インストールと初期設定）",
+    "url": "articles/it-2.html"
+  },
+  {
+    "date": "2026-11-02",
+    "updated": "2026-11-02",
+    "genre": "it",
+    "genreLabel": "IT",
+    "subGenre": "git",
+    "subGenreLabel": "Git",
+    "title": "Gitチュートリアル①：Gitとは何か、何の役に立つのか",
+    "url": "articles/it-1.html"
+  }
+]

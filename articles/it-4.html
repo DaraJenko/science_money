@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gitチュートリアル④：ブランチとマージを実践する | ノートの余白</title>
+
+  <meta property="article:modified_time" content="">
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/article.css">
+</head>
+<body>
+
+  <div class="home-bar">
+    <div class="inner">
+      <a class="home" href="../index.html">ホーム</a>
+      <div class="sub-links">
+        <a href="../about.html">このサイトについて</a>
+        <a href="../contact.html">お問い合わせ</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="article-header">
+    <div class="article-header-inner">
+      <div class="article-meta">
+        <a class="tag" id="article-tag" href="../index.html">Git</a>
+        <span class="date" id="date-published"></span>
+        <span class="date" id="date-updated"></span>
+      </div>
+      <h1>Gitチュートリアル④：ブランチとマージを実践する</h1>
+      <p class="article-lead">
+        今回は「ブランチ」を実際に作り、マージするところまでを体験します。<br>
+        コンフリクトの解決手順もあわせて練習します。<br>
+        <a href="it-012.html">前回：Gitチュートリアル③：リポジトリを作って基本コマンドを実践する</a>
+      </p>
+    </div>
+  </div>
+
+  <article class="article-body">
+
+    <nav class="toc">
+      <p class="toc-title">目次</p>
+      <ol class="toc-list">
+        <li><a href="#why-branch">ブランチとは何か</a></li>
+        <li><a href="#create-branch">ブランチを作って移動する</a></li>
+        <li><a href="#commit-on-branch">ブランチ上でcommitを積む</a></li>
+        <li><a href="#merge">mainにマージする</a></li>
+        <li><a href="#conflict">コンフリクトを起こして解決する</a></li>
+        <li><a href="#delete-branch">不要になったブランチを消す</a></li>
+        <li><a href="#summary">まとめ</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="why-branch">ブランチとは何か</h2>
+
+    <p>
+      ブランチとは、commitの流れを分岐させる「枝」です。<br>
+      <code>main</code>ブランチの内容には変えずに、新しい枝の上で試行錯誤し、<br>
+      適宜その枝の内容を<code>main</code>に合流（マージ）させる、という進め方ができます。
+    </p>
+
+    <pre><code>          C1 - C2 - C3   ← main
+                     \
+                      C4 - C5   ← feature（作業用ブランチ）</code></pre>
+
+    <p>
+      Gitのブランチの実体は、「どのcommitを指しているか」を記録した、名前付きのポインタです。<br>
+      新しいブランチを作る操作は、フォルダをまるごとコピーするような重い処理ではなく、<br>
+      ポインタを1つ追加するだけの一瞬で終わる操作です。この軽さのおかげで、<br>
+      Gitでは気軽にブランチを切ることが推奨されています。
+    </p>
+
+    <h2 id="create-branch">ブランチを作って移動する</h2>
+
+    <p>
+      前回作った<code>git-practice</code>フォルダの続きから進めます。まず現在のブランチ一覧を確認します。
+    </p>
+
+    <pre><code>git branch
+# * main   ← *が付いているのが今いるブランチ</code></pre>
+
+    <p>新しいブランチを作って、そのブランチに移動（切り替え）します。</p>
+
+    <pre><code># ブランチを作るだけ
+git branch feature-login
+
+# 作ったブランチに移動する
+git switch feature-login</code></pre>
+
+    <p>
+      作成と移動を1コマンドで済ませることもできます。実務ではこちらの書き方の方がよく使われます。
+    </p>
+
+    <pre><code>git switch -c feature-login</code></pre>
+
+    <div class="note-box">
+      <strong>NOTE</strong>
+      少し前までは<code>git checkout -b feature-login</code>という書き方が主流でした。<br>
+      <code>checkout</code>はブランチ切り替え・ファイルの復元など複数の役割を兼ねていて分かりにくかったため、<br>
+      現在はブランチ移動専用の<code>git switch</code>、ファイル復元専用の<code>git restore</code>に役割が分けられています。<br>
+      どちらの書き方でも動作するので、古い記事では<code>checkout</code>も頻繁に登場します。
+    </div>
+
+    <h2 id="commit-on-branch">ブランチ上でcommitを積む</h2>
+
+    <p>ブランチを切り替えたら、そのブランチ上でファイルを編集してcommitしてみます。</p>
+
+    <pre><code>echo "ログイン機能を実装中" >> README.md
+git add README.md
+git commit -m "ログイン機能の作業を開始"</code></pre>
+
+    <p>
+      <code>echo ></code>はファイルの中身をすべて上書きするのに対して、<br>
+      <code>echo >></code>は末尾に追記するためのコマンドです。<br>
+      ここで履歴をグラフ表示すると、mainとfeature-loginが分岐している様子が確認できます。
+    </p>
+
+    <pre><code>git log --oneline --graph --all</code></pre>
+
+    <p>
+      試しに<code>git switch main</code>で<code>main</code>ブランチに戻ると、README.mdから先ほどの追記が消えています。<br>
+      これは削除されたわけではなく、<code>feature-login</code>ブランチの方にだけ記録されている状態です。
+    </p>
+
+    <pre><code>git switch main
+cat README.md   # feature-loginでの追記が見えない
+
+git switch feature-login
+cat README.md   # 追記が見える</code></pre>
+
+    <h2 id="merge">mainにマージする</h2>
+
+    <p>
+      feature-loginでの作業が完成したと仮定して、その内容をmainに取り込みます。<br>
+      マージは「マージ先」に移動してから、「取り込みたいブランチ名」を指定して実行します。
+    </p>
+
+    <pre><code>git switch main
+git merge feature-login</code></pre>
+
+    <p>
+      今回のように、mainブランチ側でその後何もcommitしていない場合は、<br>
+      mainのポインタをfeature-loginの位置までそのまま進めるだけで済みます。<br>
+      これを<strong>fast-forwardマージ</strong>と呼びます。
+    </p>
+
+    <pre><code>マージ前
+C1 - C2 - C3           ← main
+           \
+            C4 - C5     ← feature-login
+
+マージ後（fast-forward）
+C1 - C2 - C3 - C4 - C5   ← main, feature-login</code></pre>
+
+    <p>
+      一方、mainブランチ側でも別のcommitが進んでいた場合は、<br>
+      両方の変更を1つにまとめた「マージcommit」が新しく作られます。<br>
+      これを<strong>3-wayマージ</strong>と呼びます。
+    </p>
+
+    <pre><code>C1 - C2 - C3 --------- C6（マージcommit）  ← main
+           \           /
+            C4 - C5 --                    ← feature-login</code></pre>
+
+    <h2 id="conflict">コンフリクトを起こして解決する</h2>
+
+    <p>
+      同じファイルの同じ箇所を、mainとfeature-login側で別々に変更していた場合、<br>
+      Gitはどちらを採用すべきか自動で判断できず、<strong>コンフリクト（衝突）</strong>が発生します。<br>
+      実際に体験してみましょう。
+    </p>
+
+    <pre><code># mainブランチで1行目を変更してcommit
+git switch main
+echo "# Git練習用リポジトリ（メイン）" > README.md
+git add README.md
+git commit -m "mainでREADMEのタイトルを変更"
+
+# feature側でも同じ1行目を別の内容に変更していたとする
+git switch feature-login
+echo "# Git練習用リポジトリ（ログイン機能ブランチ）" > README.md
+git add README.md
+git commit -m "featureでもREADMEのタイトルを変更"
+
+# mainにマージしようとするとコンフリクトになる
+git switch main
+git merge feature-login</code></pre>
+
+    <p>
+      コンフリクトが起きると、該当ファイルの中に次のような目印が挿入されます。
+    </p>
+
+    <pre><code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+# Git練習用リポジトリ（メイン）
+=======
+# Git練習用リポジトリ（ログイン機能ブランチ）
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-login</code></pre>
+
+    <p>
+      <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</code>から<code>=======</code>までが今いるブランチ（この場合main）側の内容、<br>
+      <code>=======</code>から<code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>までがマージしようとした側の内容です。<br>
+      このマーカーを手作業（またはエディタのマージ支援機能）で編集し、<br>
+      最終的にどちらの内容にするかを決めます。
+    </p>
+
+    <pre><code># 例：マージ側の表現を採用することにした場合
+# Git練習用リポジトリ（ログイン機能ブランチ）</code></pre>
+
+    <p>マーカーを削除して内容を確定させたら、通常のファイル変更と同じようにadd・commitします。</p>
+
+    <pre><code>git add README.md
+git commit -m "コンフリクトを解消してマージ"</code></pre>
+
+    <div class="note-box">
+      <strong>POINT</strong>
+      コンフリクトはGitの不具合ではなく、「自動で判断できないため人間に決めてほしい」という<br>
+      正常な確認プロセスです。目印で挟まれた範囲を読み比べて、最終的にどう書きたいかを<br>
+      決めれば大丈夫です。よく分からなくなったら<code>git merge --abort</code>でマージ自体を取りやめ、<br>
+      最初からやり直すこともできます。
+    </div>
+
+    <h2 id="delete-branch">不要になったブランチを消す</h2>
+
+    <p>マージし終えて役目を終えたブランチは、消してしまって問題ありません。</p>
+
+    <pre><code>git branch -d feature-login</code></pre>
+
+    <p>
+      まだmainに取り込んでいない変更がある状態で削除しようとすると、警告が出て削除を拒否します。<br>
+      強制的にブランチを破棄したい場合は、大文字の<code>-D</code>を使います（取り扱い注意）。
+    </p>
+
+    <pre><code>git branch -D 未マージのブランチ名</code></pre>
+
+    <h2 id="summary">まとめ</h2>
+
+    <p>
+      ブランチを作って作業を分岐させ、<code>git merge</code>で本流に取り込む。<br>
+      これがGitを使った並行作業の基本の流れです。コンフリクトも、仕組みが分かれば怖くありません。<br>
+      次回は最終回として、GitHubなどのリモートリポジトリとのやり取りと、<br>
+      履歴を整理するリベースの基礎を扱います。
+    </p>
+
+    <p>
+      → 続き：<a href="it-014.html">Gitチュートリアル⑤（リモートリポジトリとリベース編）</a>
+    </p>
+
+  </article>
+
+  <div class="article-footer">
+    <a class="back-link" href="../index.html">← 記事一覧に戻る</a>
+  </div>
+
+  <footer>
+    <p>© 2026 ノートの余白</p>
+  </footer>
+
+  <script src="../js/article.js"></script>
+</body>
+</html>

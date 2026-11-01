@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gitチュートリアル②：環境構築（インストールと初期設定） | ノートの余白</title>
+
+  <meta property="article:modified_time" content="">
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/article.css">
+</head>
+<body>
+
+  <div class="home-bar">
+    <div class="inner">
+      <a class="home" href="../index.html">ホーム</a>
+      <div class="sub-links">
+        <a href="../about.html">このサイトについて</a>
+        <a href="../contact.html">お問い合わせ</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="article-header">
+    <div class="article-header-inner">
+      <div class="article-meta">
+        <a class="tag" id="article-tag" href="../index.html">Git</a>
+        <span class="date" id="date-published"></span>
+        <span class="date" id="date-updated"></span>
+      </div>
+      <h1>Gitチュートリアル②：環境構築（インストールと初期設定）</h1>
+      <p class="article-lead">
+        今回はGitをPCへインストールし、commitできる状態にします。<br>
+        <a href="it-010.html">前回：Gitチュートリアル①：Gitとは何か、何の役に立つのか</a>
+      </p>
+    </div>
+  </div>
+
+  <article class="article-body">
+
+    <nav class="toc">
+      <p class="toc-title">目次</p>
+      <ol class="toc-list">
+        <li><a href="#install">Gitのインストール</a></li>
+        <li><a href="#verify">インストールの確認</a></li>
+        <li><a href="#initial-config">名前とメールアドレスの設定</a></li>
+        <li><a href="#default-branch">デフォルトブランチ名の設定</a></li>
+        <li><a href="#editor">エディタの設定</a></li>
+        <li><a href="#github-account">GitHubアカウントの準備</a></li>
+        <li><a href="#summary">まとめ</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="install">Gitのインストール</h2>
+
+    <p>OSによってインストール方法が異なります。</p>
+
+    <h3>Windows</h3>
+    <p>
+      <a href="https://git-scm.com/download/win" target="_blank" rel="noopener">Git公式サイト</a>からインストーラーをダウンロードして実行します。<br>
+      インストール中の設定項目は基本的にデフォルト(初期設定)のままで問題ありません。<br>
+      インストールすると「Git Bash」というターミナルアプリも入るので、以降はこれを使うとよいです。<br>
+      ※ターミナルとは、コマンドでパソコンを操作するためのものです。
+    </p>
+
+    <h3>macOS</h3>
+    <p>
+      Homebrewが入っていれば、ターミナルから次のコマンドでインストールできます。<br>
+      ※Homebrewとは、ソフトウェアのインストールやアップデートをまとめて管理できるパッケージマネージャーというものです。
+    </p>
+    <pre><code>brew install git</code></pre>
+    <p>
+      Homebrewを使わない場合は、Xcodeのコマンドラインツールを入れるとGitも使えるようになります。<br>
+      ※Xcodeとは、統合開発環境(アプリを開発したりテストなどするためのもの)の1つで、<br>
+      　そのコマンドラインツールとは、Xcode本体をインストールしなくても、<br>
+      　ターミナルでgitなどのコマンドを実行できるようにするツールです。
+    </p>
+    <pre><code>xcode-select --install</code></pre>
+
+    <h3>Linux（Debian / Ubuntu系）</h3>
+    <pre><code>sudo apt update
+sudo apt install git</code></pre>
+
+    <div class="note-box">
+      <strong>NOTE</strong>
+      本シリーズのコマンドはすべてターミナル（コマンドライン）上での操作を前提にしています。<br>
+      GUIツールに慣れている方も、コマンドで一連の流れを覚えると、後々どのツールでも使えると思います。
+    </div>
+
+    <h2 id="verify">インストールの確認</h2>
+
+    <p>ターミナルで以下を実行し、バージョン番号が表示されればインストール成功です。</p>
+
+    <pre><code>git --version
+# 例: git version 2.45.2</code></pre>
+
+    <h2 id="initial-config">名前とメールアドレスの設定</h2>
+
+    <p>
+      Gitを初めて使うときは、最初に一度だけ自分の名前とメールアドレスを登録します。<br>
+      ここで設定した情報が、以降作成するcommitの「作者」として記録されます。
+    </p>
+
+    <pre><code>git config --global user.name "your name"
+git config --global user.email "your@email.com"</code></pre>
+
+    <p>正しく設定できているかは、以下のコマンドで確認できます。</p>
+
+    <pre><code>git config --list</code></pre>
+
+    <div class="note-box">
+      <strong>POINT</strong>
+      <code>--global</code>を付けると、そのPC上のすべてのリポジトリに共通の設定として登録されます。<br>
+      仕事用と個人用でメールアドレスを使い分けたい場合は、各リポジトリのフォルダ内で<br>
+      <code>--global</code>を付けずに実行すると、そのリポジトリだけの設定として上書きできます。
+    </div>
+
+    <h2 id="default-branch">デフォルトブランチ名の設定</h2>
+
+    <p>
+      <code>git init</code>で新規リポジトリを作ったときに最初に作られるブランチの名前は、<br>
+      Gitのバージョンや設定によって<code>master</code>または<code>main</code>になります。<br>
+      現在はGitHub側の標準に合わせて<code>main</code>にしておくのが一般的です。
+    </p>
+
+    <pre><code>git config --global init.defaultBranch main</code></pre>
+    <p>
+      ※リボジトリ：履歴を格納しておく場所(フォルダ)<br>
+      ※ブランチ：履歴を分岐させるもの。mainブランチは履歴の本流。
+    </p>
+
+    <h2 id="editor">エディタの設定</h2>
+
+    <p>
+      commitメッセージをコマンドに直接書かず、エディタを開いて入力したい場合や、<br>
+      コンフリクト解決時にエディタが自動で開くようにしたい場合は、使用エディタを指定しておきます。<br>
+      例としてVS Codeを指定する場合は以下の通りです。
+    </p>
+
+    <pre><code>git config --global core.editor "code --wait"</code></pre>
+
+    <p>
+      特にこだわりがなければ、この設定はスキップしても問題ありません。<br>
+      ※commitメッセージ：履歴を記録する際に、変更理由を記載できる。<br>
+      ※エディタ：メモ帳など、プログラムを書くためのツール。<br>
+      ※コンフリクト：異なるブランチのcommitを統合する際に、同じ箇所で異なる変更がされていた場合、<br>
+      　どちらの変更を優先すべきか自動で判断できず停止すること。<br>
+    </p>
+
+    <h2 id="github-account">GitHubアカウントの準備</h2>
+
+    <p>
+      次回以降、リモートリポジトリの操作も扱うので、まだアカウントを持っていない場合は<br>
+      <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>で無料アカウントを作成しておきましょう。
+    </p>
+
+    <p>
+      GitHubにpushする際の認証方法として、以前はユーザー名とパスワードでの認証が使われていましたが、<br>
+      現在は<strong>Personal Access Token（PAT）</strong>または<strong>SSH鍵</strong>を使う方式が主流です。<br>
+      設定手順はGitHubの公式ドキュメントが最も正確かつ最新なので、アカウント作成後に<br>
+      「GitHub SSH key 設定」などで検索し、ドキュメントに沿って設定しておくとスムーズです。<br>
+    </p>
+
+    <div class="note-box">
+      <strong>NOTE</strong>
+      SSH鍵は一度設定すれば以降はpush・pullのたびにパスワードを聞かれなくなります。<br>
+      この設定は次々回（⑤）までに済ませておけば大丈夫です。
+    </div>
+
+    <p>
+      ※push：リモートリポジトリにローカルリポジトリの更新を反映させること<br>
+      ※pull：ローカルリポジトリにリモートリポジトリの更新を反映させること
+    </p>
+
+    <h2 id="summary">まとめ</h2>
+
+    <p>
+      Gitのインストールから、commitに必要な最低限の初期設定までを済ませました。<br>
+      次回は実際にリポジトリを作成し、commitの基本コマンドを一通り体験していきます。
+    </p>
+
+    <p>
+      → 続き：<a href="it-012.html">Gitチュートリアル③（リポジトリ作成と基本コマンド編）</a>
+    </p>
+
+  </article>
+
+  <div class="article-footer">
+    <a class="back-link" href="../index.html">← 記事一覧に戻る</a>
+  </div>
+
+  <footer>
+    <p>© 2026 ノートの余白</p>
+  </footer>
+
+  <script src="../js/article.js"></script>
+</body>
+</html>

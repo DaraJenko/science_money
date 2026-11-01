@@ -1,0 +1,299 @@
+/* =============================================
+   style.css — ノートの余白
+   全ページ共通のスタイルをここで管理します
+   ============================================= */
+
+/* ===== CSS変数（色・フォントの設定） ===== */
+/* :rootは<html>要素を指すセレクタ、ここで定義したCSS変数(カスタムプロパティ)は、子要素にも継承される。 */
+/* CSS変数を呼び出すときはvar(--bg)というようにする。 */
+:root {
+  --bg:          #f6f5f1;
+  --panel:       #ffffff;
+  --ink:         #20242b;
+  --ink-soft:    #6b7280;
+  --line:        #e3e1da;
+  --accent:      #2f5d50;
+  --accent-soft: #e6efe9;
+  --mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace; /* 左から優先に端末にフォントが存在すれば使用。最後のフォントはどの端末にも基本ある。ダブルクォテーションは空白スペースにより別々の単語とされないようにするため。 */
+  --serif: "Shippori Mincho", "Noto Serif JP", serif; /* 明朝体系 */
+  --sans: "Noto Sans JP", "Hiragino Sans", sans-serif;
+}
+
+/* ===== リセット・基本設定 ===== */
+* { /* 「*」は全要素に適用するセレクタ。 */
+  box-sizing: border-box; /* paddingとborderをwidthに含める。デフォルト(content-box)では含まれない */
+}
+
+/* bodyで指定した設定は子要素にも継承される */
+body {
+  margin: 0; /* ブラウザはデフォルトで<body>に余白を付けるため、余白を削除。 */
+  background: var(--bg); /* ページ全体の背景色 */
+  color: var(--ink); /* テキストの色 */
+  font-family: var(--sans); /* フォントの指定 */
+  line-height: 1.75; /* 行間の設定。単位なしの数値はフォントサイズの倍率。*/
+}
+
+a {
+  color: inherit; /* 親要素の色を引き継ぐ。デフォルトでは青色。 */
+  text-decoration: none; /* デフォルトで表示されるリンクの下線を削除 */
+}
+
+/* ===== ホームバー（一番上の黒いバー） ===== */
+.home-bar { /* class="home-bar"の要素に適用 */
+  background: var(--ink);
+  color: #f3f1ea;
+  padding: 10px 24px; /* 内側の余白。上下10px、左右24px。 */
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.home-bar .inner { /* class="home-bar"要素の子要素のうち、class=innerの要素すべて(階層はいくつでもOK) */
+  max-width: 1080px; /* 最大幅を1080pxに制限。画面が広くてもこれ以上にはならない。 */
+  margin: 0 auto;
+  display: flex; /* Flexboxを使う宣言。以下で左右上下の配置を制御できる。 */
+  justify-content: space-between; /* .innerの直接の子要素の間に均等にスペースを入れて、両端に寄せる。 */
+  align-items: center; /* .innerの直接の子要素を縦方向の中央に揃える */
+}
+
+.home-bar a.home::before { /* class="home-bar"要素の子要素のうち、<a class="home">であるもの。 */
+  content: "⌂ "; /* beforeは疑似要素で、対象の要素の先頭に仮想的なコンテンツを足す。ここで追加した文字は、文字列として扱われない(コピーや読み上げされない)。htmlに直接文字を書くより便利。 */
+}
+
+.home-bar .sub-links a {
+  margin-left: 18px; /* 左側の外側の余白です。リンク同士の間隔を空ける。 */
+  color: #bfc4b9;
+}
+
+.home-bar .sub-links a:hover { /* :hover = 疑似クラス。マウスを載せたときに適用する。 */
+  color: #ffffff;
+}
+
+/* ===== サイトヘッダー（タイトルエリア） ===== */
+header.site { /* <header class="site">の要素に適用するセレクタ */
+  padding: 36px 24px 26px; /* 上、左右、下の余白 */
+  border-bottom: 1px solid var(--line); /* 下側のborderにだけ線を引く。1pxの実線(solid) */
+  background: var(--panel);
+}
+
+.header-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.brand-mark {
+  font-family: var(--serif);
+  font-size: 30px;
+  letter-spacing: .03em; /* 文字と文字の間隔。em は「自分のフォントサイズを基準にした単位」で、.03em はフォントサイズの3%分の間隔を空けるという意味。 */
+}
+
+.brand-mark small {
+  display: block; /* <small> は本来インライン要素(改行されない)だが、block に変えることで強制的に改行させ、独立した行として表示。 */
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  letter-spacing: .18em; /* サブタイトル(NOTES ON THE MARGIN)の文字間隔を広めに取って、ラベルのような見た目にする。 */
+  margin-bottom: 6px; /* 下にだけ余白を取り、メインタイトルとの間隔を空ける。 */
+}
+
+.tagline {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--ink-soft);
+  max-width: 560px; /* 説明文の幅を制限。横幅が広いと1行の文字数が増えて読みにくくなるため。 */
+}
+
+/* ===== ジャンルメニューバー ===== */
+nav.genre-bar {
+  position: sticky; /* スクロールしたときに要素を固定するためのもの */
+  top: 0; /* 上から何pxに固定するかを指定。必須。 */
+  z-index: 10; /* スクロールして要素が重なったときの、表示の優先度。大きいほど優先される。 */
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .03); /* 要素と同じ形の影を作成して、横方向に0(プラスが右)、縦方向に2px(プラスが下)、影のぼかしが8px(輪郭の内外に広げる。.03廃炉の透明度3%。) */
+}
+
+nav.genre-bar .inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  gap: 4px; /* Flexboxの子要素同士の間隔を一括指定するプロパティです。margin を個別に設定するより簡単。 */
+  padding: 0 24px;
+  overflow-x: auto; /* 横方向にはみ出した内容がある場合、自動でスクロールバーを表示する。ジャンルが増えたとき用。 */
+}
+
+.genre-btn {
+  font-size: 14px;
+  padding: 14px 18px;
+  color: var(--ink-soft);
+  border: none; /* <button> タグはブラウザ標準で枠線がついているため、それを削除。 */
+  border-bottom: 3px solid transparent; /* 透明な(transparent)下線を用意して、ボタンを選択したときに表示する下線により、他のボタンと高さが変わらないようにする。 */
+  white-space: nowrap; /* ボタン内の長い文字が折り返さず1行で表示。 */
+  background: none; /* <button>標準の灰色背景を削除 */
+  font-family: inherit; /* 親要素のフォントを継承(bodyまで遡る)。<button>要素はブラウザ標準のスタイルシートで独自のフォント指定がデフォルトで適用されているため、上書きする。 */
+  cursor: pointer; /* マウスを乗せたときにカーソルを指マークに変える。 */
+}
+
+.genre-btn:hover {
+  color: var(--ink);
+}
+
+.genre-btn.active { /* class="genre-btn active" のように、2つのクラスを持つ要素 */
+  color: var(--accent);
+  border-bottom-color: var(--accent); /* 透明にしておいた下線の色を、ボタンをクリックしたときに色を付ける */
+  font-weight: 600; /* 文字の太さ */
+}
+
+/* ===== サブジャンルメニューバー =====
+   選択中のジャンルの詳細カテゴリを並べる、genre-barより一段小さいバー。
+   「すべて」ジャンルのときは中身が空になり、.visible が付かないため非表示のまま。 */
+nav.subgenre-bar {
+  display: none; /* 通常は非表示 */
+  background: var(--accent-soft);
+  border-bottom: 1px solid var(--line);
+}
+
+nav.subgenre-bar.visible {
+  display: block; /* JSが該当ジャンルのサブカテゴリを描画したときだけ表示する */
+}
+
+nav.subgenre-bar .inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  gap: 8px;
+  padding: 10px 24px;
+  overflow-x: auto;
+}
+
+.subgenre-btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 6px 12px;
+  color: var(--accent);
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 999px; /* 大きな数値を指定すると完全な丸型（ピル形）になる */
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.subgenre-btn:hover {
+  background: var(--accent-soft);
+}
+
+.subgenre-btn.active {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+/* ===== メインコンテンツ ===== */
+main {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 24px 0; /* 上 左右 下 */
+}
+
+/* ===== セクション見出し ===== */
+.section-head {
+  display: flex;
+  align-items: baseline; /* 子要素の文字のベースライン(文字の下端の基準線)を揃える指定。.code(12px)と h2(22px)のようにサイズが違う文字でも、自然に見える。 */
+  gap: 14px;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 10px; /* 見出しの文字と、下の線との間に余白。 */
+  margin-bottom: 8px;
+}
+
+.section-head .code {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  border: 1px solid var(--accent); /* 要素の全周に枠線を引く。ジャンル名の周りを囲む。 */
+  padding: 2px 8px;
+  border-radius: 2px; /* borderの角を丸める */
+}
+
+.section-head h2 {
+  font-family: var(--serif);
+  font-size: 22px;
+  margin: 0; /*  <h2> はブラウザ標準で上下に余白がついているため、削除。 */
+  flex: 1;
+}
+
+.section-head .count {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* ===== 記事リスト ===== */
+ul.article-list {
+  list-style: none; /* <ul> の標準の黒丸(・)を削除。 */
+  margin: 0 0 60px; /* 上 左右 下 */
+  padding: 0; /* <ul> はブラウザ標準で左側に内側余白(インデント)がついているため、削除。 */
+}
+
+ul.article-list li {
+  border-bottom: 1px solid var(--line); /* 各記事の下に薄い区切り線を引く。 */
+}
+
+ul.article-list a {
+  display: flex; /* 日付・タグ・タイトルを横並びにする。<a>タグは通常インライン要素だが、flexを指定することでブロック要素のように扱える。 */
+  align-items: baseline;
+  gap: 18px;
+  padding: 18px 6px; /* クリックできる範囲を広げるため、余白を持たせる。 */
+}
+
+ul.article-list a:hover {
+  background: var(--accent-soft); /* マウスを乗せたときに背景色を薄緑にする。 */
+}
+
+ul.article-list .date {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  flex-shrink: 0; /*  Flexboxは要素が画面に収まりきらないとき、デフォルトで子要素を自動的に縮める性質がある。flex-shrink: 0; はその「縮める」動作を無効にし、日付の幅(width: 80px)が画面の狭さによって潰されないようにする。 */
+  width: 80px;
+}
+
+ul.article-list .tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  background: var(--accent);
+  color: #ffffff;
+  padding: 2px 7px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  border: none;      /* <button>標準の枠線を削除（もとは<span>だったため） */
+  cursor: pointer;    /* クリックしてサブジャンルを絞り込めることが分かるようにする */
+}
+
+ul.article-list .tag:hover {
+  background: var(--ink); /* クリックできることが伝わるよう、ホバー時に色を変える */
+}
+
+ul.article-list .title {
+  font-size: 15px;
+  flex: 1;
+}
+
+/* ===== フッター ===== */
+footer {
+  border-top: 1px solid var(--line);
+  padding: 28px 24px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* ===== スマホ対応 ===== */
+@media (max-width: 640px) {
+  ul.article-list .date {
+    width: 60px;
+    font-size: 11px;
+  }
+
+  ul.article-list a {
+    gap: 10px;
+  }
+}

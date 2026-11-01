@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gitチュートリアル③：リポジトリを作って基本コマンドを実践する | ノートの余白</title>
+
+  <meta property="article:modified_time" content="">
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/article.css">
+</head>
+<body>
+
+  <div class="home-bar">
+    <div class="inner">
+      <a class="home" href="../index.html">ホーム</a>
+      <div class="sub-links">
+        <a href="../about.html">このサイトについて</a>
+        <a href="../contact.html">お問い合わせ</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="article-header">
+    <div class="article-header-inner">
+      <div class="article-meta">
+        <a class="tag" id="article-tag" href="../index.html">Git</a>
+        <span class="date" id="date-published"></span>
+        <span class="date" id="date-updated"></span>
+      </div>
+      <h1>Gitチュートリアル③：リポジトリを作って基本コマンドを実践する</h1>
+      <p class="article-lead">
+        空のフォルダから練習用のリポジトリを作り、<br>
+        init・add・commit・status・log・diffなどの基本コマンドを体験しましょう。<br>
+        <a href="it-011.html">前回：Gitチュートリアル②：環境構築（インストールと初期設定）</a>
+      </p>
+    </div>
+  </div>
+
+  <article class="article-body">
+
+    <nav class="toc">
+      <p class="toc-title">目次</p>
+      <ol class="toc-list">
+        <li><a href="#init">練習用リポジトリを作る</a></li>
+        <li><a href="#first-commit">最初のファイルをcommitする</a></li>
+        <li><a href="#status">git statusで状態を確認する</a></li>
+        <li><a href="#log">git logで履歴を確認する</a></li>
+        <li><a href="#diff">git diffで変更内容を確認する</a></li>
+        <li><a href="#undo">変更を取り消す</a></li>
+        <li><a href="#gitignore">.gitignoreで管理対象から除外する</a></li>
+        <li><a href="#summary">まとめ</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="init">練習用リポジトリを作る</h2>
+
+    <p>まずは練習用のフォルダを作り、その中でGitリポジトリとして初期化します。</p>
+
+    <pre><code>mkdir git-practice
+cd git-practice
+git init</code></pre>
+
+    <p>
+      <code>mkdir <任意のフォルダ名></code>はフォルダを作成するコマンドです。<br>
+      <code>cd <任意のフォルダ名></code>は現在のフォルダ配下のフォルダに移動するコマンドです。<br>
+      <code>git init</code>を実行すると、現在のフォルダの中に<code>.git</code>という隠しフォルダが作られます。<br>
+      このフォルダの中に、これから積み重ねていく変更履歴のすべてが記録されていきます。<br>
+      フォルダ自体は普段どおり使えますが、Gitの管理下に入った状態になったということです。
+    </p>
+
+    <div class="note-box">
+      <strong>NOTE</strong>
+      既に存在するGitHub上のリポジトリを手元にコピーしたい場合は、<br>
+      <code>git init</code>ではなく
+      <code>git clone URL</code>を使います。clone操作は第5回で扱います。
+    </div>
+
+    <h2 id="first-commit">最初のファイルをcommitする</h2>
+
+    <p>適当なファイルを1つ作成してみます。</p>
+
+    <pre><code>echo "# Git練習用リポジトリ" > README.md</code></pre>
+
+    <p>
+      <code>echo "任意の文字列"</code>は文字列を出力するコマンドで、<code>></code>を使うことで、<br>
+      指定のファイルに出力を保存できます。存在しないファイル名を指定した場合、新規作成されます。<br>
+      作成しただけではGitの管理対象にはなりません。commitするまでの流れは次の3ステップです。
+    </p>
+
+    <pre><code># 1. 変更状態を確認する
+git status
+
+# 2. 変更をステージに追加する
+git add README.md
+
+# 3. commitとして記録する
+git commit -m "READMEを追加"</code></pre>
+
+    <h3>ステージという中間エリア</h3>
+    <p>
+      Gitには、<br>
+      「ワーキングディレクトリ（実際のファイル）」<br>
+      「ステージ（commit予定のファイルを一時的に置く場所）」<br>
+      「リポジトリ（commit済みの履歴）」<br>
+      という3つの領域があります。<br>
+      <code>git add</code>はワーキングディレクトリの変更をステージへ移す操作、<br>
+      <code>git commit</code>はステージの内容をリポジトリへ記録する操作です。
+    </p>
+
+    <pre><code>ワーキングディレクトリ  --git add-->  ステージ  --git commit-->  リポジトリ（履歴）</code></pre>
+
+    <p>
+      間にステージを挟むことで、「変更したファイルのうち、どれを今回のcommitに含めるか」を選べます。<br>
+      複数の変更をしていても、関係のある変更だけをまとめてcommitすることが可能です。
+    </p>
+
+    <div class="note-box">
+      <strong>POINT</strong>
+      commitメッセージは「何をしたか」が一目で分かるように書きましょう。<br>
+      「修正」「更新」のような曖昧な表現より、「READMEに使い方の説明を追加」のように具体的に書くと、<br>
+      後から履歴を見返したときに役立ちます。
+    </div>
+
+    <h2 id="status">git statusで状態を確認する</h2>
+
+    <p>
+      作業中に迷ったら、まず<code>git status</code>を打つ癖をつけましょう。
+      「今どのファイルが変更されているか」「ステージに追加済みか」が表示されます。
+    </p>
+
+    <pre><code>git status</code></pre>
+
+    <p>試しにファイルをもう1つ追加・編集してから実行すると、状態の変化がわかります。</p>
+
+    <pre><code>echo "console.log('hello');" > app.js
+git status
+# app.js が「Untracked files（未追跡）」として表示される
+
+git add app.js
+git status
+# app.js が「Changes to be committed（ステージ済み）」に変わる</code></pre>
+
+    <h2 id="log">git logで履歴を確認する</h2>
+
+    <p>app.jsもcommitしてから、これまでの履歴を確認してみます。</p>
+
+    <pre><code>git commit -m "app.jsを追加"
+git log</code></pre>
+
+    <p>
+      commitごとにハッシュ値・作者・日時・メッセージが表示されます。<br>
+      1行ずつコンパクトに表示したい場合は、次のオプションが便利です。
+    </p>
+
+    <pre><code>git log --oneline</code></pre>
+
+    <p>ブランチの分岐まで含めて図で見たい場合は、次のように<code>--graph</code>を付けます（第4回で活躍します）。</p>
+
+    <pre><code>git log --oneline --graph --all</code></pre>
+
+    <h2 id="diff">git diffで変更内容を確認する</h2>
+
+    <p>README.mdに1行追記してみます。</p>
+
+    <pre><code>echo "practiceフォルダで基本コマンドを試しています。" >> README.md</code></pre>
+
+    <p>
+      commitする前に、具体的に何が変わったのかを確認したいときは<code>git diff</code>を使います。
+    </p>
+
+    <pre><code># ワーキングディレクトリとステージ（＝直前のcommit）との差分
+git diff
+
+# ステージ済みの内容とcommit済みの内容との差分
+git diff --staged</code></pre>
+
+    <p>
+      <code>-</code>で始まる行が削除された内容、<code>+</code>で始まる行が追加された内容を表します。<br>
+      commit前の最終チェックとして習慣づけておくと、意図しない変更を含めてしまうミスを防げます。
+    </p>
+
+    <h2 id="undo">変更を取り消す</h2>
+
+    <p>
+      作業していると、「やっぱり今の変更をなかったことにしたい」という場面がよくあります。<br>
+      よく使う3パターンを紹介します。
+    </p>
+
+    <table class="command-table">
+      <thead>
+        <tr>
+          <th>コマンド</th>
+          <th>できること</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>git restore ファイル名</td>
+          <td>ファイルを直前のcommitの状態に戻す（ステージ前の変更を取り消す）</td>
+        </tr>
+        <tr>
+          <td>git restore --staged ファイル名</td>
+          <td>git addを取り消し、ステージから外す（変更内容自体は残る）</td>
+        </tr>
+        <tr>
+          <td>git commit --amend</td>
+          <td>直前のcommitをやり直す（メッセージの修正や、追加のファイルを含め直す）</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <pre><code># READMEの変更を取り消して直前のcommit状態に戻す
+git restore README.md</code></pre>
+
+    <div class="note-box">
+      <strong>NOTE</strong>
+      <code>git commit --amend</code>は、すでにGitHubなどにpush済みのcommitに対して使うと
+      履歴の整合性が崩れる原因になります。まだ自分の手元だけにあるcommitに対して使うのが基本です。
+    </div>
+
+    <h2 id="gitignore">.gitignoreで管理対象から除外する</h2>
+
+    <p>
+      ライブラリのインストールフォルダ（<code>node_modules</code>など）や、OSが自動生成するファイル、<br>
+      パスワードなどの秘密情報を含む設定ファイルは、そもそもGitの管理対象に含めたくありません。<br>
+      そうしたファイルやフォルダは、<code>.gitignore</code>というファイルに記述しておくことで、<br>
+      <code>git status</code>や<code>git add .</code>の対象から除外できます。
+    </p>
+
+    <pre><code># .gitignore の例
+node_modules/
+.env
+*.log
+.DS_Store</code></pre>
+
+    <div class="note-box">
+      <strong>POINT</strong>
+      すでに一度commitしてしまったファイルは、後から.gitignoreに追記しても自動では除外されません。<br>
+      その場合は<code>git rm --cached ファイル名</code>で履歴の追跡だけを止める必要があります。
+    </div>
+
+    <h2 id="summary">まとめ</h2>
+
+    <p>
+      <code>init</code>でリポジトリを作り、<code>add</code>→<code>commit</code>の流れでcommitを積み、<br>
+      <code>status</code>・<code>log</code>・<code>diff</code>で状態を確認する。これが日常的なGit操作の基本サイクルです。<br>
+      次回はいよいよ、「ブランチ」を実際に作り、マージまで一通り体験します。
+    </p>
+
+    <p>
+      → 続き：<a href="it-013.html">Gitチュートリアル④（ブランチとマージ実践編）</a>
+    </p>
+
+  </article>
+
+  <div class="article-footer">
+    <a class="back-link" href="../index.html">← 記事一覧に戻る</a>
+  </div>
+
+  <footer>
+    <p>© 2026 ノートの余白</p>
+  </footer>
+
+  <script src="../js/article.js"></script>
+</body>
+</html>

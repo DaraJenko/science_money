@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gitチュートリアル⑤：リモートリポジトリとリベースの基礎 | ノートの余白</title>
+
+  <meta property="article:modified_time" content="">
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/article.css">
+</head>
+<body>
+
+  <div class="home-bar">
+    <div class="inner">
+      <a class="home" href="../index.html">ホーム</a>
+      <div class="sub-links">
+        <a href="../about.html">このサイトについて</a>
+        <a href="../contact.html">お問い合わせ</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="article-header">
+    <div class="article-header-inner">
+      <div class="article-meta">
+        <a class="tag" id="article-tag" href="../index.html">Git</a>
+        <span class="date" id="date-published"></span>
+        <span class="date" id="date-updated"></span>
+      </div>
+      <h1>Gitチュートリアル⑤：リモートリポジトリとリベースの基礎</h1>
+      <p class="article-lead">
+        今回はGitHubなどのリモートリポジトリとのやり取りと、<br>
+        履歴を整理する「リベース」の基礎を扱います。<br>
+        <a href="it-013.html">前回：Gitチュートリアル④：ブランチとマージを実践する</a>
+      </p>
+    </div>
+  </div>
+
+  <article class="article-body">
+
+    <nav class="toc">
+      <p class="toc-title">目次</p>
+      <ol class="toc-list">
+        <li><a href="#remote-basic">リモートリポジトリとは</a></li>
+        <li><a href="#clone">GitHub上にリポジトリを作ってcloneする</a></li>
+        <li><a href="#push-pull-fetch">push・pull・fetchの違い</a></li>
+        <li><a href="#tracking">追跡ブランチとgit push -u</a></li>
+        <li><a href="#rebase">リベースの基礎</a></li>
+        <li><a href="#rebase-vs-merge">リベースとマージの使い分け</a></li>
+        <li><a href="#pr-flow">プルリクエストの大まかな流れ</a></li>
+        <li><a href="#summary">まとめ・シリーズのまとめ</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="remote-basic">リモートリポジトリとは</h2>
+
+    <p>
+      これまで扱ってきたのは、自分のPC上だけに存在する<strong>ローカルリポジトリ</strong>でした。<br>
+      これに対し、GitHubなどインターネット上のサーバーに置かれたリポジトリを<br>
+      <strong>リモートリポジトリ</strong>と呼びます。<br>
+      ローカルとリモートを紐づけておくことで、変更を送受信できるようになります。
+    </p>
+
+    <p>既存のローカルリポジトリにリモートを紐づけるには、次のコマンドを使います。</p>
+
+    <pre><code>git remote add origin https://github.com/ユーザー名/リポジトリ名.git</code></pre>
+
+    <p>
+      <code>origin</code>は紐づけたリモートに付ける名前で、慣習的にこの名前が使われます。<br>
+      登録済みのリモート一覧は次で確認できます。
+    </p>
+
+    <pre><code>git remote -v</code></pre>
+
+    <h2 id="clone">GitHub上にリポジトリを作ってcloneする</h2>
+
+    <p>
+      今回はGitHub上に空のリポジトリを新規作成し、それを手元にコピー（clone）する流れを試します。
+    </p>
+
+    <ol class="toc-list">
+      <li>GitHubにログインし、右上の「+」から「New repository」を選ぶ</li>
+      <li>リポジトリ名を入力し、「Create repository」を押す（READMEなどは追加しなくてよい）</li>
+      <li>表示されたHTTPSのURLをコピーする</li>
+    </ol>
+
+    <p>手元のPCの、練習フォルダとは別の場所でcloneを実行します。</p>
+
+    <pre><code>git clone https://github.com/ユーザー名/リポジトリ名.git</code></pre>
+
+    <p>
+      <code>git clone</code>は、リモートの内容をまるごとダウンロードし、ローカルリポジトリとして使える状態にし、<br>
+      さらに<code>origin</code>という名前でそのリモートを自動的に紐づけてくれる、便利なコマンドです。
+    </p>
+
+    <div class="note-box">
+      <strong>NOTE</strong>
+      すでに手元にあるプロジェクトを後からGitHubに紐づける場合は<code>git remote add</code>、<br>
+      GitHub上のリポジトリを新しく手元にコピーしたい場合は<code>git clone</code>、と覚えておくと迷いません。
+    </div>
+
+    <h2 id="push-pull-fetch">push・pull・fetchの違い</h2>
+
+    <p>ローカルとリモートの間で変更をやり取りするコマンドは、主に次の3つです。</p>
+
+    <table class="command-table">
+      <thead>
+        <tr>
+          <th>コマンド</th>
+          <th>説明</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>git push</td>
+          <td>ローカルのcommitをリモートに送る。</td>
+        </tr>
+        <tr>
+          <td>git fetch</td>
+          <td>
+            リモートの最新状態をダウンロードするだけで、<br>
+            ローカルの作業内容にはまだ反映しない。
+          </td>
+        </tr>
+        <tr>
+          <td>git pull</td>
+          <td>
+            fetchしたうえで、ローカルの今のブランチに自動的にマージ（またはリベース）する。<br>
+            実質的にfetch＋mergeのショートカット。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>試しに、cloneしたリポジトリでファイルを作ってpushしてみます。</p>
+
+    <pre><code>echo "# サンプルリポジトリ" > README.md
+git add README.md
+git commit -m "READMEを追加"
+git push origin main</code></pre>
+
+    <p>GitHub側のページを開き直すと、pushした内容が反映されているのが確認できます。</p>
+
+    <div class="note-box">
+      <strong>POINT</strong>
+      複数人・複数端末で作業する場合は、作業を始める前に<code>git pull</code>する習慣をつけておくと、<br>
+      リモートとの食い違いによるコンフリクトが起きにくくなります。
+    </div>
+
+    <h2 id="tracking">追跡ブランチとgit push -u</h2>
+
+    <p>
+      ローカルのブランチとリモートのブランチを紐づけておくと（これを<strong>追跡ブランチ</strong>の設定と呼びます）、<br>
+      2回目以降は<code>git push</code>や<code>git pull</code>だけで、どこに送受信するかをGitが自動判断してくれます。
+    </p>
+
+    <pre><code># 初回だけ -u（--set-upstream）を付けて紐づける
+git push -u origin main
+
+# 以降はこれだけでよい
+git push
+git pull</code></pre>
+
+    <h2 id="rebase">リベースの基礎</h2>
+
+    <p>
+      第4回で扱った<code>merge</code>は、分岐した履歴をそのまま残しつつ1本にまとめる方法でした。<br>
+      これに対し<strong>リベース</strong>は、あるブランチのcommitを、別のブランチの最新地点に「積み直す」操作です。
+    </p>
+
+    <pre><code>リベース前
+C1 - C2 - C3           ← main
+           \
+            C4 - C5     ← feature
+
+git switch feature
+git rebase main
+
+リベース後
+C1 - C2 - C3                 ← main
+             \
+              C4'- C5'       ← feature（mainの最新地点の上に積み直された）</code></pre>
+
+    <p>
+      C4・C5はそのままコピーされるのではなく、C4'・C5'という<strong>新しいcommit</strong>として作り直されます。<br>
+      内容は同じでも、commitのハッシュ値が変わる点に注意してください。
+    </p>
+
+    <div class="note-box">
+      <strong>NOTE</strong>
+      リベース中にコンフリクトが起きた場合の解決方法は、マージのときとほぼ同じです。<br>
+      目印を編集して内容を確定させたら<code>git add</code>した後、<code>git commit</code>ではなく<br>
+      <code>git rebase --continue</code>で作業を再開します。中断したい場合は<code>git rebase --abort</code>で元に戻せます。
+    </div>
+
+    <h2 id="rebase-vs-merge">リベースとマージの使い分け</h2>
+
+    <table class="command-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>merge</th>
+          <th>rebase</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>履歴の見た目</td>
+          <td>分岐がそのまま残る</td>
+          <td>一直線に整理される</td>
+        </tr>
+        <tr>
+          <td>commitのハッシュ値</td>
+          <td>元のまま変わらない</td>
+          <td>作り直され、変わる</td>
+        </tr>
+        <tr>
+          <td>向いている場面</td>
+          <td>「いつ何を合流させたか」の事実を残したいとき</td>
+          <td>自分だけのブランチの履歴を、pushする前にきれいに整えたいとき</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note-box">
+      <strong>POINT</strong>
+      すでに他の人と共有・pushしてしまったcommitをリベースすると、ハッシュ値が変わることで<br>
+      相手側の履歴と食い違いが生じ、混乱の元になります。<br>
+      「リベースはpushする前の、自分だけの作業に使う」と覚えておくと安全です。
+    </div>
+
+    <h2 id="pr-flow">プルリクエストの大まかな流れ</h2>
+
+    <p>
+      チーム開発では、mainブランチに直接pushするのではなく、作業用ブランチをpushしたうえで、<br>
+      GitHub上の「Pull Request（プルリクエスト）」という機能を使い、<br>
+      他のメンバーにレビューしてもらってからマージする、という流れが一般的です。<br>
+      大まかな流れは次の通りです。
+    </p>
+
+    <ol class="toc-list">
+      <li>作業用ブランチを作る（<code>git switch -c feature-xxx</code>）</li>
+      <li>そのブランチでcommitを積み、リモートにpushする（<code>git push -u origin feature-xxx</code>）</li>
+      <li>GitHub上でPull Requestを作成し、変更内容の説明を書く</li>
+      <li>他のメンバーがレビューし、必要なら追加のcommitで修正する</li>
+      <li>承認されたらGitHub上のボタンでmainにマージする</li>
+    </ol>
+
+    <p>
+      これはGitHub側の機能であり、Gitコマンド自体に「プルリクエスト」という概念はありません。
+    </p>
+
+    <h2 id="summary">まとめ・シリーズのまとめ</h2>
+
+    <p>
+      リモートリポジトリとのやり取りは<code>clone</code>・<code>push</code>・<code>pull</code>・<code>fetch</code>が基本です。<br>
+      加えて、履歴を一直線に整理したいときの選択肢として<code>rebase</code>があります。
+    </p>
+
+    <p>
+      全5回で一通りの基礎を扱いました。<br>
+      ここから先は、実際の自分のプロジェクトでGitを使いながら、<br>
+      必要な操作をそのつど調べていくのが一番の近道です。<br>
+      ブランチの分岐やリベースの動きをアニメーションで視覚的に復習したい場合は、<br>
+      <a href="https://learngitbranching.js.org/" target="_blank" rel="noopener">Learn Git Branching</a>で
+      実際にコミットツリーを動かしながら練習してみてください。
+    </p>
+
+  </article>
+
+  <div class="article-footer">
+    <a class="back-link" href="../index.html">← 記事一覧に戻る</a>
+  </div>
+
+  <footer>
+    <p>© 2026 ノートの余白</p>
+  </footer>
+
+  <script src="../js/article.js"></script>
+</body>
+</html>

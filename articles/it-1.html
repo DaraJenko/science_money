@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gitチュートリアル①：Gitとは何か、何の役に立つのか | ノートの余白</title>
+
+  <meta property="article:modified_time" content="">
+
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/article.css">
+</head>
+<body>
+
+  <div class="home-bar">
+    <div class="inner">
+      <a class="home" href="../index.html">ホーム</a>
+      <div class="sub-links">
+        <a href="../about.html">このサイトについて</a>
+        <a href="../contact.html">お問い合わせ</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="article-header">
+    <div class="article-header-inner">
+      <div class="article-meta">
+        <a class="tag" id="article-tag" href="../index.html">Git</a>
+        <span class="date" id="date-published"></span>
+        <span class="date" id="date-updated"></span>
+      </div>
+      <h1>Gitチュートリアル①：Gitとは何か、何の役に立つのか</h1>
+      <p class="article-lead">
+        全5回でGitの基礎を一通り触れるようになることを目指すシリーズです。
+      </p>
+    </div>
+  </div>
+
+  <article class="article-body">
+
+    <nav class="toc">
+      <p class="toc-title">目次</p>
+      <ol class="toc-list">
+        <li><a href="#why-version-control">Gitとは</a></li>
+        <li><a href="#git-features">Gitの利点</a></li>
+        <li><a href="#git-vs-github">GitとGitHubの違い</a></li>
+        <li><a href="#roadmap">このシリーズで学ぶこと</a></li>
+        <li><a href="#summary">まとめ</a></li>
+      </ol>
+    </nav>
+
+    <h2 id="why-version-control">Gitとは</h2>
+
+    <p>
+      ファイルの変更履歴を記録・参照するための分散型バージョン管理ソフトです。<br>
+      分散型とは、サーバーだけでなくローカルのPCに履歴をコピーして、<br>
+      記録の編集や参照ができる形式を指します。<br>
+      なお、記録のことをcommit(コミット)と呼んだりします。
+    </p>
+
+    <h2 id="use-cases">Gitの利点</h2>
+
+    <p>具体的に何が便利なのか、例を挙げます。</p>
+
+    <h3>1. 気軽に「元に戻せる」安心感</h3>
+    <p>
+      例えば、あるプログラムファイルがあり、新機能の開発をするとします。<br>
+      開発が中止となっても、commitしておいた地点まで戻せます。<br>
+    </p>
+
+    <h3>2. 変更理由を後から追える</h3>
+    <p>
+      commitにはメッセージを添えられるため、変更理由をあとで見返すことができます。<br>
+      不具合が起きたときに、原因の特定をしやすくなります。
+    </p>
+
+    <h3>3. 並行作業が簡単</h3>
+    <p>
+      branch(ブランチ)というgitコマンドを使うと、履歴を分岐させることができます。<br>
+      例えば、現行のプログラムは稼働しつつ、新機能を開発したいとき、<br>
+      複数の作業を同時進行させ、開発完了後に本流に取り込むことが可能です。
+    </p>
+
+    <h3>4. チームでの共同開発が可能</h3>
+    <p>
+      GitHubなどと組み合わせることで、同じプロジェクトに複数人が同時に手を加え、<br>
+      変更内容をレビューしてから取り込む、といったチーム開発が可能です。<br>
+      なお、このレビュー依頼をPull Request[PR](プルリクエスト)と言います。
+    </p>
+
+    <h2 id="git-vs-github">GitとGitHubの違い</h2>
+
+    <p>
+      Git初心者がまず混同しやすいのが、GitとGitHubの違いです。
+    </p>
+
+    <table class="command-table">
+      <thead>
+        <tr>
+          <th>名前</th>
+          <th>内容</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Git</td>
+          <td>PCにインストールして使う、バージョン管理のソフトウェア。</td>
+        </tr>
+        <tr>
+          <td>GitHub</td>
+          <td>Gitの全履歴(リポジトリ)をオンラインで共有できるサービス。</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note-box">
+      <strong>POINT</strong>
+      Gitだけでもバージョン管理は可能です。<br>
+      GitHubは「複数人での共同作業」や「クラウドへのバックアップ」を目的とした外部サービスです。<br>
+      GitLabやBitbucketといった類似サービスもあります。
+    </div>
+
+    <h2 id="roadmap">このシリーズで学ぶこと</h2>
+
+    <p>このチュートリアルは、次のような流れで進みます。</p>
+
+    <ol class="toc-list">
+      <li>①（本記事）Gitとは何か、何の役に立つのか</li>
+      <li>②　Gitの環境構築</li>
+      <li>③　リポジトリを作って基本コマンドを実践する</li>
+      <li>④　ブランチとマージを実践する</li>
+      <li>⑤　リモートリポジトリの操作とリベースの基礎</li>
+    </ol>
+
+    <p>
+      実際に手を動かしながら進める構成にしているので、<br>
+      ②以降は実際にターミナル（コマンドライン）を開いて、<br>
+      一つずつコマンドを打ってみることをおすすめします。
+    </p>
+
+    <div class="note-box">
+      <strong>NOTE</strong>
+      ブランチ操作をブラウザ上のアニメーションで視覚的に学べる
+      <a href="https://learngitbranching.js.org/" target="_blank" rel="noopener">Learn Git Branching</a>
+      という有名な学習サイトもあります。<br>
+      本シリーズで文章として理解した後、そちらでコミットの流れを確認しながら手を動かすと、<br>
+      理解が定着しやすいと思います。
+    </div>
+
+    <h2 id="summary">まとめ</h2>
+
+    <p>
+      Gitは「変更履歴を記録し、必要なときに参照・復元できるようにする」ためのツールであり、<br>
+      GitHubはそのGitのリポジトリをネット上で共有・共同編集するためのサービスです。<br>
+      次回は、実際に自分のPCにGitをインストールし、使える状態にします。
+    </p>
+
+    <p>
+      → 続き：<a href="it-011.html">Gitチュートリアル②（環境構築編）</a>
+    </p>
+
+  </article>
+
+  <div class="article-footer">
+    <a class="back-link" href="../index.html">← 記事一覧に戻る</a>
+  </div>
+
+  <footer>
+    <p>© 2026 ノートの余白</p>
+  </footer>
+
+  <script src="../js/article.js"></script>
+</body>
+</html>
